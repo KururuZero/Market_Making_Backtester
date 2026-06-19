@@ -79,9 +79,8 @@ class websocket_plus_aggTrades_backtest:
         if(len(self.td_list) > 0):
             test_date = self.td_list[0]
             df = pd.read_csv(get_OB_path(test_date))
-            df[f'shift_{ref}'] = df[ref].shift(1)
-            df[f'{ref}_change'] = df[ref] - df[f'shift_{ref}']
-            result = ((df[f'{ref}_change'].dropna()).std()) ** 2
+            df['log_ret'] = np.log(df[ref] / df[ref].shift(1))
+            result = (df['log_ret'].dropna().std()) ** 2
             del df
             return result
         
@@ -211,7 +210,7 @@ class websocket_plus_aggTrades_backtest:
                                 bot_order.ask_queue = 0.0
                                 bot_order.ask_qty -= actual_qty
                                 position -= actual_qty
-                                cash += actual_qty * bot_order.ask_price * (1 + fee)
+                                cash += actual_qty * bot_order.ask_price * (1 - fee)
                                 trading_freq[1] +=1
                                 if position < max_pos_record[1]:
                                     max_pos_record[1] = position
@@ -262,7 +261,7 @@ class websocket_plus_aggTrades_backtest:
                             bot_order.ask_queue = 0.0
                             bot_order.ask_qty -= actual_qty
                             position -= actual_qty
-                            cash += actual_qty * bot_order.ask_price * (1 + fee)
+                            cash += actual_qty * bot_order.ask_price * (1 - fee)
                             trading_freq[1] +=1
                             if position < max_pos_record[1]:
                                 max_pos_record[1] = position
