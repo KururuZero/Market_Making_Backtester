@@ -101,7 +101,7 @@ class websocket_plus_aggTrades_backtest:
 
                 if(df_trade_remaining is not None): 
                     df_trade = pd.concat([df_trade_remaining, pd.read_csv(get_trade_path(day))])
-                    df_trade = df_trade.drop_duplicates(subset='timestamp', keep='last')
+                    df_trade = df_trade.drop_duplicates(subset='transact_time', keep='last')
                     del df_trade_remaining
                 else: 
                     df_trade = pd.read_csv(get_trade_path(day))
@@ -131,28 +131,28 @@ class websocket_plus_aggTrades_backtest:
             "min_pos"         : self.record.max_pos_record[1],
         }
 
-    def single_EMWA_backtest(self, record, df_OB, df_trade, last_day = False):
-        var = record.var
+    def single_EMWA_backtest(self, rec, df_OB, df_trade, last_day = False):
+        var = rec.var
         qty = self.trading_param.qty
         half_spread = self.trading_param.half_spread
-        trading_freq = record.trading_freq #buy and sell
-        max_pos_record = record.max_pos_record
-        position = record.position
-        cash = record.cash
+        trading_freq = rec.trading_freq #buy and sell
+        max_pos_record = rec.max_pos_record
+        position = rec.position
+        cash = rec.cash
         pos_max = self.trading_param.pos_limit
-        hit_pos_max = record.hit_pos_max
+        hit_pos_max = rec.hit_pos_max
         max_loss = self.trading_param.max_loss
-        hit_max_loss = record.hit_max_loss
+        hit_max_loss = rec.hit_max_loss
         lamb = self.trading_param.lamb
         fee = self.trading_param.fee
         ref_col = self.trading_param.ref
         
         df_OB2 = df_OB
         curr_ref = df_OB2.iloc[0][ref_col]
-        if(record.last_ref == 0.0):
+        if(rec.last_ref == 0.0):
             last_ref = curr_ref
         else:
-            last_ref = record.last_ref
+            last_ref = rec.last_ref
         start_time = df_OB2['timestamp'].iloc[0]
         df_trade = df_trade[df_trade['transact_time'] >= start_time].copy()
         trade_ts    = df_trade['transact_time'].values      
@@ -160,7 +160,7 @@ class websocket_plus_aggTrades_backtest:
         trade_qty   = df_trade['quantity'].values
         trade_buyer = df_trade['is_buyer_maker'].values
 
-        bot_order = record.bot_order
+        bot_order = rec.bot_order
         trade_idx = 0
         trade_length = len(df_trade)
         last_timestamp = df_OB2["timestamp"].iloc[-1]
