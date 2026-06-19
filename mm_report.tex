@@ -113,7 +113,7 @@ All code is available on GitHub at \url{https://github.com/KururuZero/Market_Mak
 
 \begin{thebibliography}{9}
 \bibitem{gm88} Grossman, S.J. and Miller, M.H. (1988). Liquidity and Market Structure. \textit{Journal of Finance}.
-\bibitem{as08} Avellaneda, M. and Stoikov, S. (2008). High‑frequency trading in a limit order book. \textit{Quantitative Finance}.
+\bibitem{as08}  Avellaneda, M. and Stoikov, S. (2008). High‑frequency trading in a limit order book. \textit{Quantitative Finance}.
 \bibitem{cjp} Cartea, Á., Jaimungal, S., and Penalva, J. (2015). \textit{Algorithmic and High‑Frequency Trading}. Cambridge University Press.
 \end{thebibliography}
 
@@ -122,7 +122,7 @@ I have encountered some difficulties or made some serious mistakes. The followin
 \begin{itemize}
     \item Probabilistic filling model 
     
-    The first time I wrote the backtester, my data is completely faked and the script is very easy. I simply used a random number generator to simulate the price trend movement and whether my order got filled or not. Turn out it was a good head start to test on your logic and determine what variables and parameters you will need what you start using real data (like gamma, half spread, etc)
+    The first time I wrote the backtester, my data is completely faked and the script is very easy. I simply used a random number generator to simulate the price trend movement and whether my order got filled or not. Turn out it was a good head start to test on your logic and determine what variables and parameters you will need what you start using real data (like gamma, half spread, etc), as well as understanding jargon in finance, like bid and ask, which I always mix up.
     
     \item Choice of AWS EC2 model
 
@@ -140,7 +140,7 @@ I have encountered some difficulties or made some serious mistakes. The followin
 
     Using aggTrade data alone is also doable when you backtest your strategy, but combining it with real time orderbook data will make it much more realistic.
 
-    \item \textbf{Cautious to variance (DeepSeek Wrote this)}
+    \item \textbf{Cautious to variance (Written by DeepSeek)}
 
     The variance I first calculated from the first day is the variance of the
     log‑returns \(\ln\!\bigl(\frac{S_t}{S_{t-1}}\bigr)\), which is dimensionless and
@@ -158,5 +158,22 @@ I have encountered some difficulties or made some serious mistakes. The followin
     \item Maker fee
 
     Be aware of the unit you are using when you consider the effect of maker fee and make sure they are consistent across classes and functions. The first time I ran this I carelessly used \(200 \%\) fee, which results in at least ten million USDs loss with all set of parameters.
+
+    \item \textbf{Keep the variance seed and the EWMA updates in the same unit (Written by DeepSeek)}
+
+    The very first variance I computed used \emph{raw price changes}
+    \(S_t - S_{t-1}\), which gives a dollar variance (e.g., \(\sim 50\,\text{USDT}^2\)).
+    But the EWMA inside the backtest loop updates the variance with
+    \emph{log‑returns} \(\ln(S_t / S_{t-1})\), which are dimensionless and tiny.
+    Mixing the two meant that on the first few snapshots the “dollar variance” was
+    scaled twice by \(S_t^2\), giving absurdly wide spreads—the bot quoted spreads
+    of thousands of dollars for the first few minutes until the EWMA’s memory faded.
+
+    The fix is to let \texttt{get\_return\_var} compute the variance of log‑returns
+    as well:
+    \texttt{np.log(df[ref] / df[ref].shift(1)).var()}.
+    Now the seed is dimensionless, just like the EWMA updates, and the later
+    conversion \(\texttt{var} \times S_t^2\) correctly gives a dollar variance from
+    the very first snapshot.
 \end{itemize}
 \end{document}
