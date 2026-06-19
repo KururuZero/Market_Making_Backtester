@@ -1,2 +1,6 @@
 # Market_Making_Backtester
-I created these to record live data of BTC/USD order book in Binance, and combine with the aggtrade data available on Binance to backtest a simple market making strategy. I used Deepseek heavily during the process.
+In one sentence: I created a Python script to capture live BTC/USDT order book depth from Binance and backtest a simple market‑making strategy using historical aggTrades data. I used DeepSeek heavily during the process but I am confident that I can explain 90% of them. I seldom directly copy from DeepSeek except for tedious but straightforward tasks.
+
+The two scripts are for getting data and backtesting respectively. Please feel free to use them or give me some comments if you have any. Appreciated OwO
+
+I will also write a report to document my process, explain how my code works, record some previous versions of the backtester, and some comments for those who want to replicate my work. Thank you so much.
