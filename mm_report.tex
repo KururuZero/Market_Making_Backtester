@@ -4,6 +4,7 @@
 \usepackage{geometry}
 \geometry{margin=1in}
 \usepackage{amsmath,amssymb}
+\usepackage{cancel}
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{multirow}
@@ -21,7 +22,15 @@ I would like to formally acknowledge the use of DeepSeek during the process of i
 
 
 \section{Introduction}
-I wrote this to explain my two Python scripts written for live order book data collection and backtesting with different sets of parameters. The results might be included, but very few are found profitable. I will also document something that I tried and deleted after, and some comments during the process.
+
+I wrote this to \xcancel{ have DeepSeek to } explain my two Python scripts written for live order book data collection and backtesting with different sets of parameters. The results might be included, but very few are found profitable. I will also document something that I tried and deleted after, and some comments during the process.
+
+The reason why I chose Crypto is that
+\begin{enumerate}
+    \item Its data is accessible without charge
+    \item When I later on invest real money, I can buy 0.00001 BTC, which is affordable as a student
+\end{enumerate}
+I simply chose Bitcoin because it is the most well-known.
 
 \section{Platform for running the scripts}
 I run the scripts on AWS EC2 24/7 and I chose t4g.small as the model since it is the most cost-effective concerning my needs. Using AWS have the following benefits:
